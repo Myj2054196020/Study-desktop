@@ -34,7 +34,7 @@ linux:
 publish:
   provider: github
   owner: Myj2054196020
-  repo: study-desktop
+  repo: Study-desktop
 
 
 

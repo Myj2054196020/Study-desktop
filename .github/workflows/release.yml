@@ -15,4 +15,4 @@ jobs:
           node-version: 22
       - run: npm ci
       - name: Build installer and publish to GitHub Release
-        run: npx electron-builder --publish always -c.publish.provider=github
+        run: npx electron-builder --publish always
