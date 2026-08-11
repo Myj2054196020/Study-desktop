@@ -1,0 +1,15 @@
+{
+    "theme_color":  "#2B3A67",
+    "name":  "Study desktop",
+    "display":  "standalone",
+    "short_name":  "Study",
+    "background_color":  "#FAF6EF",
+    "start_url":  ".",
+    "icons":  [
+                  {
+                      "type":  "image/png",
+                      "sizes":  "256x256",
+                      "src":  "icon.png"
+                  }
+              ]
+}

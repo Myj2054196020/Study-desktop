@@ -1,0 +1,43 @@
+appId: com.study.desktop
+productName: Study desktop
+compression: maximum
+electronLanguages:
+  - zh-CN
+  - en-US
+directories:
+  output: release
+  buildResources: build
+files:
+  - dist/**
+  - dist-electron/**
+  - data/**
+  - assets/**
+  - package.json
+win:
+  target: nsis
+  icon: assets/brand/xiaogu-icon.ico
+  # signExecutable=false keeps icon/metadata editing while skipping code signing
+  signExecutable: false
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Study desktop
+mac:
+  category: public.app-category.education
+  icon: assets/brand/xiaogu-icon.png
+linux:
+  target: AppImage
+  icon: assets/brand/xiaogu-icon.png
+
+publish:
+  provider: github
+  owner: YOUR_GITHUB_USERNAME
+  repo: study-desktop
+
+
+
+
+
+

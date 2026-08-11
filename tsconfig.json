@@ -1,0 +1,30 @@
+{
+    "include":  [
+                    "src",
+                    "vite.config.ts"
+                ],
+    "compilerOptions":  {
+                            "noEmit":  null,
+                            "strict":  null,
+                            "types":  [
+                                          "vite/client"
+                                      ],
+                            "module":  "ESNext",
+                            "noUnusedLocals":  null,
+                            "moduleResolution":  "bundler",
+                            "useDefineForClassFields":  null,
+                            "skipLibCheck":  null,
+                            "isolatedModules":  null,
+                            "noFallthroughCasesInSwitch":  null,
+                            "target":  "ES2020",
+                            "resolveJsonModule":  null,
+                            "allowImportingTsExtensions":  null,
+                            "lib":  [
+                                        "ES2020",
+                                        "DOM",
+                                        "DOM.Iterable"
+                                    ],
+                            "jsx":  "react-jsx",
+                            "noUnusedParameters":  null
+                        }
+}

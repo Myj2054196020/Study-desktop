@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang='zh-CN'>
+  <head>
+    <meta charset='UTF-8' />
+    <style>
+      html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; user-select: none; }
+      #wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; border-radius: 18px; background: rgba(17, 24, 39, 0.92); color: #fff; font-family: 'Segoe UI', 'PingFang SC', sans-serif; -webkit-app-region: drag; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35); }
+      #time { font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; }
+      #progress { width: 180px; height: 4px; border-radius: 999px; background: rgba(255, 255, 255, 0.18); margin-top: 6px; overflow: hidden; }
+      #progressFill { height: 100%; width: 0%; background: #60a5fa; border-radius: 999px; transition: width 0.4s linear; }
+      #status { font-size: 12px; opacity: 0.72; margin-top: 2px; }
+      #close { position: absolute; top: 6px; right: 10px; border: none; background: transparent; color: rgba(255, 255, 255, 0.6); font-size: 12px; cursor: pointer; -webkit-app-region: no-drag; }
+    </style>
+  </head>
+  <body>
+    <div id='wrap'>
+      <div id='time'>25:00</div>
+      <div id='status'>准备就绪</div>
+      <div id='progress'><div id='progressFill'></div></div>
+    </div>
+    <button id='close' title='关闭'>✕</button>
+    <script>
+      var timeEl = document.getElementById('time')
+      var statusEl = document.getElementById('status')
+      function fmt(s) {
+        var m = Math.floor(s / 60)
+        var sec = s % 60
+        var pad = function (n) { return n < 10 ? '0' + String(n) : String(n) }
+        return pad(m) + ':' + pad(sec)
+      }
+      if (window.electronAPI) {
+        window.electronAPI.onPomodoroState(function (state) {
+          if (state) {
+            timeEl.textContent = fmt(state.timeLeft || 0)
+            statusEl.textContent = state.isRunning ? '专注中 🍅' : (state.timeLeft > 0 ? '已暂停' : '准备就绪')
+            var total = state.totalSession || state.timeLeft || 1
+            var pct = Math.max(0, Math.min(100, ((total - (state.timeLeft || 0)) / total) * 100))
+            document.getElementById('progressFill').style.width = pct + '%'
+          }
+        })
+        document.getElementById('close').onclick = function () { window.electronAPI.closeWidget() }
+      }
+    </script>
+  </body>
+</html>
+
