@@ -33,7 +33,7 @@ linux:
 
 publish:
   provider: github
-  owner: YOUR_GITHUB_USERNAME
+  owner: Myj2054196020
   repo: study-desktop
 
 
