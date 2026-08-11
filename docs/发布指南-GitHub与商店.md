@@ -6,13 +6,14 @@
 
 项目已具备：GitHub Actions 工作流（`.github/workflows/release.yml`）、electron-builder 配置（`publish: github`）、`latest.yml` 更新清单（electron-updater 用它做增量更新）。
 
+> ✅ **独立 git 仓库已就绪**：`learning-desktop` 目录下已 `git init`（main 分支），并完成初始提交（提交时已排除 node_modules / dist / release，含 .gitattributes 统一换行）。
+
 ### 步骤（需要你的 GitHub 账号操作，我无法代劳登录）
 
-1. **建仓库**：GitHub 新建仓库，名字建议 `study-desktop`（Public 即可）。
+1. **建仓库**：GitHub 新建仓库，名字建议 `study-desktop`（Public 即可，不要勾选初始化 README）。
 2. **关联并推送**（在 `E:\code\learning-desktop` 执行）：
    ```
    git remote add origin https://github.com/<你的用户名>/study-desktop.git
-   git branch -M main
    git push -u origin main
    ```
 3. **把 `electron-builder.yml` 里的占位替换为你的用户名**：
@@ -50,6 +51,11 @@
 4. 国内商店等你有正式用户量/资质后再评估。
 
 ## 三、当前构建产物
-- `release/Study desktop Setup 1.3.1.exe`（约 127.5 MB，NSIS 安装包；含小咕品牌图标、最大化不盖任务栏、小咕「×」可关闭等修复）
+- `release/Study desktop Setup 1.3.6.exe`（约 127.5 MB，NSIS 安装包；含小咕品牌图标 + A/B/C/D 功能纵深 + 卡片快捷键 + 心得 Markdown）
+
+> **本地打包网络提示**：electron-builder 下载 electron 偶尔超时，可设置镜像：
+> ```
+> $env:ELECTRON_MIRROR='https://npmmirror.com/mirrors/electron/'
+> ```
 - 默认数据：仅「高等数学」一个科目，两章示例（函数与极限 / 导数与微分）；全新安装即全新体验。
 - 历史使用数据已备份至 `C:\Users\20541\AppData\Roaming\study-desktop-data-backup-20260811\`（可随时找回，不参与新体验）。
