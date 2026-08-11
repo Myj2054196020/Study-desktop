@@ -4,6 +4,26 @@
 
 基于 Electron + React + TypeScript + Vite 的本地学习管理桌面应用。
 
+## 截图预览
+
+| 首页（浅色） | 首页（深色） | 每日必做 |
+|---|---|---|
+| ![首页](assets/screenshots/01-dashboard.png) | ![深色](assets/screenshots/02-dashboard-dark.png) | ![每日必做](assets/screenshots/03-tasks.png) |
+
+| 番茄钟 | 学习统计（洞察建议） |
+|---|---|
+| ![番茄钟](assets/screenshots/04-pomodoro.png) | ![学习统计](assets/screenshots/05-stats.png) |
+
+## 下载安装
+
+**Windows 安装包**（约 127 MB，支持 Win10 / Win11）：
+
+- GitHub Release（官方）：<https://github.com/Myj2054196020/Study-desktop/releases/latest>
+- 国内加速下载（无需代理）：<https://ghfast.top/https://github.com/Myj2054196020/Study-desktop/releases/latest/download/Study-desktop-Setup-1.3.6.exe>
+- 备用加速：<https://gh-proxy.com/https://github.com/Myj2054196020/Study-desktop/releases/latest/download/Study-desktop-Setup-1.3.6.exe>
+
+> 说明：国内加速链接由第三方代理服务提供，若失效请改用 GitHub 官方链接；Gitee（码云）镜像正在规划中，将提供国内直连下载。
+
 ## 习惯养成（每日开灯仪式）
 
 - **今日三件事**：每天第一次打开首页，看到「待办 / 到期卡片 / 专注」三件小事，一键直达，看完当天不再打扰
