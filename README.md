@@ -22,7 +22,12 @@
 - 国内加速下载（无需代理）：<https://ghfast.top/https://github.com/Myj2054196020/Study-desktop/releases/latest/download/Study-desktop-Setup-1.3.6.exe>
 - 备用加速：<https://gh-proxy.com/https://github.com/Myj2054196020/Study-desktop/releases/latest/download/Study-desktop-Setup-1.3.6.exe>
 
-> 说明：国内加速链接由第三方代理服务提供，若失效请改用 GitHub 官方链接；Gitee（码云）镜像正在规划中，将提供国内直连下载。
+- Gitee 镜像（国内直连）：<https://gitee.com/meng-yanjin/study-desktop/releases>
+  - 分卷 1：[Study-desktop-Setup-1.3.6.7z.001](https://gitee.com/meng-yanjin/study-desktop/releases/download/v1.3.6/Study-desktop-Setup-1.3.6.7z.001)
+  - 分卷 2：[Study-desktop-Setup-1.3.6.7z.002](https://gitee.com/meng-yanjin/study-desktop/releases/download/v1.3.6/Study-desktop-Setup-1.3.6.7z.002)
+  - 两个分卷都要下载，用 7-Zip（<https://www.7-zip.org>）打开 `.001` 即可解压出安装包
+
+> 说明：加速链接由第三方代理服务提供，若失效请改用 GitHub 官方链接；百度网盘镜像准备中。
 
 ## 习惯养成（每日开灯仪式）
 
