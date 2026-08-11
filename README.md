@@ -27,7 +27,9 @@
   - 分卷 2：[Study-desktop-Setup-1.3.6.7z.002](https://gitee.com/meng-yanjin/study-desktop/releases/download/v1.3.6/Study-desktop-Setup-1.3.6.7z.002)
   - 两个分卷都要下载，用 7-Zip（<https://www.7-zip.org>）打开 `.001` 即可解压出安装包
 
-> 说明：加速链接由第三方代理服务提供，若失效请改用 GitHub 官方链接；百度网盘镜像准备中。
+- 百度网盘（备选，免费用户可能限速）：链接 <https://pan.baidu.com/s/1KOlkhgpnlg656HYXoOjWKA> 提取码 `gi8w`
+
+> 说明：加速链接由第三方代理服务提供，若失效请改用 GitHub 官方链接或 Gitee 镜像。
 
 ## 习惯养成（每日开灯仪式）
 
