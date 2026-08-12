@@ -640,6 +640,16 @@ function registerIpc(): void {
     }
     return true
   })
+  ipcMain.handle('widget:control', function (_event, action: string) {
+    if (mainWindow) {
+      if (action === 'toggle') {
+        mainWindow.webContents.send('app:toggle-pomodoro')
+      } else if (action === 'start') {
+        mainWindow.webContents.send('app:start-pomodoro')
+      }
+    }
+    return true
+  })
   ipcMain.handle('pomodoro:sync', function (_event, state: { isRunning: boolean; timeLeft: number; totalSession: number }) {
     lastPomodoroState = state
     sendPomodoroState()

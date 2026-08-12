@@ -10,6 +10,9 @@
       #progressFill { height: 100%; width: 0%; background: #60a5fa; border-radius: 999px; transition: width 0.4s linear; }
       #status { font-size: 12px; opacity: 0.72; margin-top: 2px; }
       #close { position: absolute; top: 6px; right: 10px; border: none; background: transparent; color: rgba(255, 255, 255, 0.6); font-size: 12px; cursor: pointer; -webkit-app-region: no-drag; }
+      #controls { margin-top: 8px; display: flex; gap: 6px; -webkit-app-region: no-drag; }
+      #controls button { border: 1px solid rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 12px; border-radius: 999px; padding: 4px 12px; cursor: pointer; }
+      #controls button:hover { background: rgba(255, 255, 255, 0.2); }
     </style>
   </head>
   <body>
@@ -17,6 +20,9 @@
       <div id='time'>25:00</div>
       <div id='status'>准备就绪</div>
       <div id='progress'><div id='progressFill'></div></div>
+      <div id='controls'>
+        <button id='ctrlBtn' title='暂停 / 继续'>开始</button>
+      </div>
     </div>
     <button id='close' title='关闭'>✕</button>
     <script>
@@ -33,12 +39,19 @@
           if (state) {
             timeEl.textContent = fmt(state.timeLeft || 0)
             statusEl.textContent = state.isRunning ? '专注中 🍅' : (state.timeLeft > 0 ? '已暂停' : '准备就绪')
+            ctrlBtn.textContent = state.isRunning ? '暂停' : (state.timeLeft > 0 ? '继续' : '开始')
             var total = state.totalSession || state.timeLeft || 1
             var pct = Math.max(0, Math.min(100, ((total - (state.timeLeft || 0)) / total) * 100))
             document.getElementById('progressFill').style.width = pct + '%'
           }
         })
         document.getElementById('close').onclick = function () { window.electronAPI.closeWidget() }
+        var ctrlBtn = document.getElementById('ctrlBtn')
+        ctrlBtn.onclick = function () {
+          if (window.electronAPI && window.electronAPI.widgetControl) {
+            window.electronAPI.widgetControl('toggle')
+          }
+        }
       }
     </script>
   </body>

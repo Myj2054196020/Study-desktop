@@ -15,6 +15,14 @@ export default function PomodoroTimer() {
   const { isRunning, timeLeft, totalSession, sessionCount, dailyGoal, phase, currentTask, start, pause, reset, skip, setDuration, clearTask, lastFinish, clearLastFinish } = usePomodoro()
   const [reflectText, setReflectText] = useState('')
   const [saving, setSaving] = useState(false)
+  const [customMin, setCustomMin] = useState('')
+
+  const applyCustom = function () {
+    const m = parseInt(customMin, 10)
+    if (!isNaN(m) && m >= 1 && m <= 180) {
+      setDuration(m)
+    }
+  }
 
   useEffect(function () {
     document.body.classList.toggle('lamp-on', isRunning)
@@ -95,11 +103,28 @@ export default function PomodoroTimer() {
               key={String(p.minutes)}
               className={classNames('preset-pill', totalSession === p.minutes * 60 ? 'active' : undefined)}
               onClick={function () { setDuration(p.minutes) }}
+              disabled={isRunning}
+              title={isRunning ? '专注中不能切换时长' : undefined}
             >
               {p.label}
             </button>
           )
         })}
+        <div className='pomodoro-custom'>
+          <input
+            type='number'
+            min={1}
+            max={180}
+            value={customMin}
+            onChange={function (e) { setCustomMin(e.target.value) }}
+            onKeyDown={function (e) { if (e.key === 'Enter') applyCustom() }}
+            placeholder='自定义'
+            className='pomodoro-custom-input'
+            disabled={isRunning}
+            title='自定义时长（1-180 分钟）'
+          />
+          <button className='preset-pill custom-apply' onClick={applyCustom} disabled={isRunning} title='应用自定义时长'>设置</button>
+        </div>
       </div>
       <div className='timer-circle-wrap'>
         <svg viewBox='0 0 200 200' className='timer-circle'>

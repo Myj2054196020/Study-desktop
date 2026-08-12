@@ -320,11 +320,15 @@ export default function MistakesPage() {
     }).filter(function (g) { return g.list.length > 0 })
     const items = groups.map(function (g) {
       const rows = g.list.map(function (m) {
+        const imgs = (m.images && m.images.length > 0)
+          ? '<div class="imgs">' + m.images.map(function (src) { return '<img src="' + src + '" alt="错题图片" />' }).join('') + '</div>'
+          : ''
         return '<div class="mistake"><div class="q">' + escHtml(m.question) + '</div>' +
           (m.myAnswer ? '<div class="row"><span class="label">我的答案</span><span class="my-answer">' + escHtml(m.myAnswer) + '</span></div>' : '') +
           (m.correctAnswer ? '<div class="row"><span class="label">正确答案</span><span class="correct">' + escHtml(m.correctAnswer) + '</span></div>' : '') +
           (m.reason ? '<div class="row"><span class="label">错因</span><span class="reason">' + escHtml(m.reason) + '</span></div>' : '') +
           (chapterTitle(m.chapterId) ? '<div class="row"><span class="label">章节</span><span class="chapter">' + escHtml(chapterTitle(m.chapterId)) + '</span></div>' : '') +
+          imgs +
           '</div>'
       }).join('')
       return '<h2 class="group">' + escHtml(g.label) + '（' + g.list.length + '）</h2>' + rows
@@ -337,7 +341,9 @@ export default function MistakesPage() {
       '.q{font-weight:700;font-size:14px;margin-bottom:6px;}' +
       '.row{font-size:13px;margin:4px 0;line-height:1.6;}' +
       '.label{color:#8A92A8;margin-right:6px;}.my-answer{color:#C24338;}.correct{color:#2E8B67;}.reason{color:#7A5CC8;}.chapter{color:#3E7CB1;}' +
-      '@media print{h1{font-size:20px}.mistake{break-inside:avoid;}}' +
+      '.imgs{margin:8px 0 2px;}' +
+      '.imgs img{display:block;max-width:100%;height:auto;border:1px solid #E6E0D2;border-radius:8px;margin:6px 0;background:#fff;}' +
+      '@media print{body{padding:0}h1{font-size:20px}.mistake{break-inside:avoid;page-break-inside:avoid}.imgs img{max-width:90%;}' +
       '</style></head><body>' +
       '<h1>错题本 · 考前打印</h1>' +
       '<div class="meta">共 ' + visible.length + ' 题 · 导出于 ' + new Date().toLocaleString('zh-CN', { hour12: false }) + '</div>' +

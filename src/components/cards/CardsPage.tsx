@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Archive, BookOpen, CalendarDays, FileQuestion, Layers, Sparkles, StickyNote } from 'lucide-react'
 import { EmptyState } from '../ui/EmptyState'
 import { createDb } from '../../lib/db'
@@ -67,6 +67,8 @@ export default function CardsPage() {
   const [quizAnswers, setQuizAnswers] = useState<number[]>([])
   const [quizGraded, setQuizGraded] = useState(false)
   const [quizMsg, setQuizMsg] = useState('')
+  const [deletedCard, setDeletedCard] = useState<ReviewCard | null>(null)
+  const undoTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const load = function () {
     createDb().getDueCards(50).then(function (list) {
@@ -91,6 +93,29 @@ export default function CardsPage() {
   useEffect(function () {
     load()
   }, [dataVersion])
+
+  useEffect(function () {
+    return function () {
+      if (undoTimer.current) clearTimeout(undoTimer.current)
+    }
+  }, [])
+
+  const handleDeleteCard = async function (card: ReviewCard) {
+    await createDb().deleteCard(card.id)
+    setCards(function (prev) { return prev.filter(function (x) { return x.id !== card.id }) })
+    setDue(function (prev) { return prev.filter(function (x) { return x.id !== card.id }) })
+    if (undoTimer.current) clearTimeout(undoTimer.current)
+    setDeletedCard(card)
+    undoTimer.current = setTimeout(function () { setDeletedCard(null) }, 6000)
+  }
+
+  const undoDeleteCard = async function () {
+    if (!deletedCard) return
+    if (undoTimer.current) clearTimeout(undoTimer.current)
+    await createDb().saveCard(deletedCard)
+    setDeletedCard(null)
+    load()
+  }
 
   useEffect(function () {
     const onFocus = function (e: Event) {
@@ -158,8 +183,24 @@ export default function CardsPage() {
     })
   }
 
+  const alreadyInMistakes = function (question: string): string {
+    return '这张卡片已经加入过错题本 ✓'
+  }
+
   const addCurrentToMistakes = async function () {
     if (!current) return
+    // 防重：一张卡片只能加入一次错题本
+    if (current.mistakeId) {
+      setMistakeMsg(alreadyInMistakes(current.front))
+      setTimeout(function () { setMistakeMsg('') }, 2600)
+      return
+    }
+    const existing = await createDb().getMistakes().catch(function () { return [] as Mistake[] })
+    if (existing.some(function (m) { return m.question === current.front })) {
+      setMistakeMsg(alreadyInMistakes(current.front))
+      setTimeout(function () { setMistakeMsg('') }, 2600)
+      return
+    }
     const now = new Date().toISOString()
     const mistake: Mistake = {
       id: uid('mist'),
@@ -172,12 +213,24 @@ export default function CardsPage() {
       updatedAt: now,
     }
     await createDb().saveMistake(mistake)
+    await createDb().saveCard(Object.assign({}, current, { mistakeId: mistake.id }))
     setMistakeMsg('已加入错题本 ✓（可在错题本复习）')
     setTimeout(function () { setMistakeMsg('') }, 2600)
   }
 
   const addStuckToMistakes = async function () {
     if (!lastFailed) return
+    if (lastFailed.mistakeId) {
+      setStuckMsg(alreadyInMistakes(lastFailed.front))
+      setTimeout(function () { setStuckMsg('') }, 2600)
+      return
+    }
+    const existing = await createDb().getMistakes().catch(function () { return [] as Mistake[] })
+    if (existing.some(function (m) { return m.question === lastFailed.front })) {
+      setStuckMsg(alreadyInMistakes(lastFailed.front))
+      setTimeout(function () { setStuckMsg('') }, 2600)
+      return
+    }
     const now = new Date().toISOString()
     const mistake: Mistake = {
       id: uid('mist'),
@@ -190,6 +243,7 @@ export default function CardsPage() {
       updatedAt: now,
     }
     await createDb().saveMistake(mistake)
+    await createDb().saveCard(Object.assign({}, lastFailed, { mistakeId: mistake.id }))
     setStuckMsg('已加入错题本 ✓ 建议重写背面，让它更好记')
     setLastFailed(null)
   }
@@ -504,6 +558,12 @@ export default function CardsPage() {
             </select>
           </div>
         </div>
+        {deletedCard ? (
+          <div className='card-undo-bar'>
+            <span>已删除「{deletedCard.front}」</span>
+            <Button variant='primary' onClick={undoDeleteCard}>撤销</Button>
+          </div>
+        ) : null}
         {visibleCards.length === 0 ? (
           <EmptyState title='还没有复习卡片' hint='从章节一键生成，小咕帮你安排复习节奏' color='var(--c-cards)' />
         ) : (
@@ -532,10 +592,7 @@ export default function CardsPage() {
                     setEditCard(c)
                     setEditNote(c.note || '')
                   }}>批注</Button>
-                  <Button variant='danger' onClick={async function () {
-                    await createDb().deleteCard(c.id)
-                    load()
-                  }}>删除</Button>
+                  <Button variant='danger' onClick={function () { handleDeleteCard(c) }}>删除</Button>
                 </li>
               )
             })}

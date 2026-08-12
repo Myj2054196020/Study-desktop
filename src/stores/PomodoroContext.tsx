@@ -56,6 +56,7 @@ export function PomodoroProvider(props: { children: ReactNode }) {
   const startRef = useRef<() => void>(function () {})
   const pauseRef = useRef<() => void>(function () {})
   const isRunningRef = useRef(false)
+  const sessionStartRef = useRef(0)
 
   useEffect(function () {
     durationRef.current = duration
@@ -110,17 +111,31 @@ export function PomodoroProvider(props: { children: ReactNode }) {
     const mins = durationRef.current
     const isWorkPhase = phaseRef.current === 'work'
     const now = new Date()
-    const start = new Date(now.getTime() - mins * 60 * 1000)
+    const realCompleted = completed && isWorkPhase
+    const elapsedSec = Math.max(0, Math.round((Date.now() - sessionStartRef.current) / 1000))
+    // 10 秒内取消（或非专注阶段跳过）：不产生任何记录
+    if (!realCompleted && elapsedSec < 10) {
+      setIsRunning(false)
+      setTimeLeft(mins * 60)
+      document.title = APP_TITLE
+      if (window.electronAPI) {
+        window.electronAPI.setWindowTitle(APP_TITLE)
+      }
+      return
+    }
+    // 完成按设定时长；中断按实际专注秒数（10 秒以上自动流入统计）
+    const durationMin = realCompleted ? mins : elapsedSec / 60
+    const start = new Date(now.getTime() - durationMin * 60 * 1000)
     createDb().savePomodoroRecord({
       id: uid('pm'),
       startTime: start.toISOString(),
       endTime: now.toISOString(),
-      durationMinutes: mins,
-      completed: completed && isWorkPhase,
+      durationMinutes: durationMin,
+      completed: realCompleted,
       taskId: currentTaskRef.current ? currentTaskRef.current.id : undefined,
       subjectId: currentTaskRef.current ? currentTaskRef.current.subjectId : undefined,
     }).then(function () {
-      if (completed && isWorkPhase) {
+      if (realCompleted) {
         setSessionCount(function (n) { return n + 1 })
         const task = currentTaskRef.current
         setLastFinish({
@@ -140,13 +155,14 @@ export function PomodoroProvider(props: { children: ReactNode }) {
         }
       }
     }).catch(function () {})
-    if (settings && settings.autoCycle && completed) {
+    if (settings && settings.autoCycle && realCompleted) {
       const nextPhase = isWorkPhase ? 'break' : 'work'
       const nextMins = nextPhase === 'break' ? 5 : 25
       setPhase(nextPhase)
       setDurationState(nextMins)
       setTimeLeft(nextMins * 60)
       setIsRunning(true)
+      sessionStartRef.current = Date.now()
       document.title = APP_TITLE
       if (window.electronAPI) {
         window.electronAPI.setWindowTitle(APP_TITLE)
@@ -215,21 +231,27 @@ export function PomodoroProvider(props: { children: ReactNode }) {
     if (timeLeft <= 0) {
       setTimeLeft(durationRef.current * 60)
     }
+    sessionStartRef.current = Date.now()
     setIsRunning(true)
   }
   const startForTask = function (task: PomodoroTask) {
     setLastFinish(null)
     setCurrentTask(task)
-    setDuration(25)
+    setDurationState(25)
     setTimeLeft(25 * 60)
+    sessionStartRef.current = Date.now()
     setIsRunning(true)
   }
   const pause = function () {
     setIsRunning(false)
   }
   const reset = function () {
-    setIsRunning(false)
-    setTimeLeft(durationRef.current * 60)
+    // 取消/重置也走统一的中断记录：10 秒内无记录，10 秒后按实际专注时长流入统计
+    if (isRunning) {
+      finishSession(false)
+    } else {
+      setTimeLeft(durationRef.current * 60)
+    }
   }
   const skip = function () {
     if (isRunning) {
@@ -237,6 +259,10 @@ export function PomodoroProvider(props: { children: ReactNode }) {
     }
   }
   const setDuration = function (minutes: number) {
+    // 专注中不允许切换时长，避免吞掉进行中的进度
+    if (isRunning) {
+      return
+    }
     setIsRunning(false)
     setDurationState(minutes)
     setTimeLeft(minutes * 60)

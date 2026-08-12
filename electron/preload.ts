@@ -99,6 +99,7 @@ const api = {
   syncPomodoro: (state: unknown) => ipcRenderer.invoke('pomodoro:sync', state),
   toggleWidget: () => ipcRenderer.invoke('widget:toggle'),
   closeWidget: () => ipcRenderer.invoke('widget:close'),
+  widgetControl: (action: string) => ipcRenderer.invoke('widget:control', action),
   backupNow: () => ipcRenderer.invoke('app:backupNow'),
   getMistakes: () => ipcRenderer.invoke('mistakes:get'),
   saveMistake: (mistake: unknown) => ipcRenderer.invoke('mistakes:save', mistake),

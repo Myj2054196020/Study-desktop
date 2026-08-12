@@ -232,7 +232,7 @@ export default function ChapterDetail() {
     setAiBusy(true)
     setAiResult('AI 总结中，请稍候...')
     const result = await createDb().aiChat([
-      { role: 'system', content: '你是一名学习助手。请用简洁的中文总结以下章节的核心知识点、重点公式与易错点，控制在 300 字以内。' },
+      { role: 'system', content: '我是小咕，深夜书房里的猫头鹰，你的专属学习伙伴；回答用中文，温暖简洁，避免官腔。 你是一名学习助手。请用简洁的中文总结以下章节的核心知识点、重点公式与易错点，控制在 300 字以内。' },
       { role: 'user', content: chapter.title + '\n\n' + chapter.content.slice(0, 4000) },
     ])
     setAiResult(result)

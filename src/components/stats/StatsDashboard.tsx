@@ -6,6 +6,11 @@ import {
   PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart,
   ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from 'recharts'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
+import 'katex/dist/katex.min.css'
 import { useApp } from '../../stores/AppContext'
 import { useReflections } from '../../stores/ReflectionContext'
 import { createDb } from '../../lib/db'
@@ -107,6 +112,7 @@ export default function StatsDashboard() {
   const [reportText, setReportText] = useState('')
   const [reportBusy, setReportBusy] = useState(false)
   const [reportCtx, setReportCtx] = useState<{ stats: StudyStats; extras: { tasksDone: number; tasksTotal: number; mistakesOpen: number; mistakesMastered: number; cardsDue: number; cardsReviewed: number; cardsDuePeriod: number }; days: number } | null>(null)
+  const [reportView, setReportView] = useState<'preview' | 'source'>('preview')
 
   useEffect(function () {
     let alive = true
@@ -216,7 +222,7 @@ export default function StatsDashboard() {
   const polishReport = async function () {
     setReportBusy(true)
     const polished = await createDb().aiChat([
-      { role: 'system', content: '下面是一份学习周报草稿，请润色成通顺、积极、结构清晰的中文周报，保留 Markdown 格式与所有数据，开头增加一段总结。' },
+      { role: 'system', content: '我是小咕，深夜书房里的猫头鹰，你的专属学习伙伴；回答用中文，温暖简洁，避免官腔。 下面是一份学习周报草稿，请润色成通顺、积极、结构清晰的中文周报，保留 Markdown 格式与所有数据，开头增加一段总结。' },
       { role: 'user', content: reportText },
     ])
     setReportText(polished.indexOf('失败') === -1 && polished.indexOf('AI') === -1 ? polished : reportText)
@@ -327,7 +333,7 @@ export default function StatsDashboard() {
       return s.name + '：专注' + s.minutes + '分钟，章节完成' + s.completedChapters + '/' + s.totalChapters
     }).join('；')
     const result = await createDb().aiChat([
-      { role: 'system', content: '请基于以下科目学习数据，生成一份简短的学习画像（优势科目、薄弱环节、学习风格特点、一句话建议），200 字以内，分点输出。' },
+      { role: 'system', content: '我是小咕，深夜书房里的猫头鹰，你的专属学习伙伴；回答用中文，温暖简洁，避免官腔。 请基于以下科目学习数据，生成一份简短的学习画像（优势科目、薄弱环节、学习风格特点、一句话建议），200 字以内，分点输出。' },
       { role: 'user', content: '总时长' + stats.totalStudyMinutes + '分钟，连续打卡' + stats.streakDays + '天。' + summary },
     ])
     setProfileText(result.indexOf('失败') === -1 && result.indexOf('AI ') === -1 ? result : 'AI 未返回有效内容，请稍后重试')
@@ -368,7 +374,17 @@ export default function StatsDashboard() {
       {reportOpen ? (
         <Modal onClose={function () { setReportOpen(false) }} className='report-modal'>
           <h3><FileText size={15} /> 学习周报</h3>
-          <textarea className='report-textarea' value={reportText} onChange={function (e) { setReportText(e.target.value) }} />
+          <div className='report-view-toggle'>
+            <button className={reportView === 'preview' ? 'active' : ''} onClick={function () { setReportView('preview') }}>预览</button>
+            <button className={reportView === 'source' ? 'active' : ''} onClick={function () { setReportView('source') }}>Markdown 源码</button>
+          </div>
+          {reportView === 'preview' ? (
+            <div className='report-preview md-body'>
+              <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>{reportText}</ReactMarkdown>
+            </div>
+          ) : (
+            <textarea className='report-textarea' value={reportText} onChange={function (e) { setReportText(e.target.value) }} />
+          )}
           <div className='reflection-modal-actions'>
             <Button variant='default' onClick={function () {
               navigator.clipboard.writeText(reportText).then(function () {

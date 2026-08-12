@@ -6,6 +6,7 @@ interface ModalProps {
   onClose: () => void
   children: ReactNode
   className?: string
+  closeOnBackdrop?: boolean
 }
 
 export function Modal(props: ModalProps) {
@@ -20,7 +21,7 @@ export function Modal(props: ModalProps) {
   }, [props.onClose])
 
   return (
-    <div className='modal-overlay' onClick={props.onClose}>
+    <div className='modal-overlay' onClick={function (e) { if (props.closeOnBackdrop !== false) props.onClose() }}>
       <div className={classNames('modal', props.className)} onClick={function (e) { e.stopPropagation() }}>
         {props.children}
       </div>

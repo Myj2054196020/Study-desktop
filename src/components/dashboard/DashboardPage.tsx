@@ -18,7 +18,7 @@ function clock(m: number): string {
 }
 
 export default function DashboardPage() {
-  const { dataVersion, setActivePage } = useApp()
+  const { dataVersion, setActivePage, bumpDataVersion } = useApp()
   const [tasks, setTasks] = useState<DailyTask[]>([])
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [dueCount, setDueCount] = useState(0)
@@ -218,6 +218,8 @@ export default function DashboardPage() {
   const toggleTask = async function (id: string, completed: boolean) {
     await createDb().toggleDailyTask(id, completed)
     load()
+    // 通知全局数据版本变化，任务页（TaskContext）同步刷新
+    bumpDataVersion()
   }
 
   const daysLeft = function (deadline?: string): number | null {

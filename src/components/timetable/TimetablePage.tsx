@@ -177,7 +177,7 @@ export default function TimetablePage() {
                 const minute = DAY_START + i
                 if (minute % 60 === 0) {
                   return (
-                    <div key={minute} className='timetable-time' style={{ top: i * PX_PER_MIN - 6 }}>
+                    <div key={minute} className='timetable-time' style={{ top: Math.max(0, i * PX_PER_MIN - 6) }}>
                       {minutesToClock(minute)}
                     </div>
                   )

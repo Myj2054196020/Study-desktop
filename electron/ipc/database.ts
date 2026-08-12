@@ -952,8 +952,12 @@ export class DataStore {
   getStats(days?: number): StudyStats {
     const completed = this.data.chapters.filter(function (c) { return c.completed })
     const donePomodoros = this.data.pomodoroRecords.filter(function (r) { return r.completed })
+    // 统计专注时长时也计入“专注 10 秒以上被中断”的番茄（未完成但真实投入的时间）
+    const countedPomodoros = this.data.pomodoroRecords.filter(function (r) {
+      return r.completed || (r.durationMinutes || 0) >= 10 / 60
+    })
     const readingRecords = this.data.readingRecords || []
-    const totalStudyMinutes = donePomodoros.reduce(function (sum, r) { return sum + (r.durationMinutes || 0) }, 0)
+    const totalStudyMinutes = countedPomodoros.reduce(function (sum, r) { return sum + (r.durationMinutes || 0) }, 0)
       + readingRecords.reduce(function (sum, r) { return sum + (r.durationMinutes || 0) }, 0)
     const totalChapters = this.data.chapters.length
     const completedChapters = completed.length
@@ -961,7 +965,7 @@ export class DataStore {
 
     const minutesByDay: Record<string, number> = {}
     const chaptersByDay: Record<string, number> = {}
-    for (const r of donePomodoros) {
+    for (const r of countedPomodoros) {
       const key = this.dateKey(new Date(r.startTime))
       minutesByDay[key] = (minutesByDay[key] || 0) + (r.durationMinutes || 0)
     }
@@ -977,7 +981,7 @@ export class DataStore {
       chaptersByDay[key] = (chaptersByDay[key] || 0) + 1
     }
 
-    const subjectStats = this.buildSubjectStats(donePomodoros, completed, totalChapters)
+    const subjectStats = this.buildSubjectStats(countedPomodoros, completed, totalChapters)
     const minutesBySubjectDay: Record<string, Record<string, number>> = {}
     for (const r of donePomodoros) {
       const key = this.dateKey(new Date(r.startTime))

@@ -155,7 +155,7 @@ export default function AIPage() {
     setInput('')
     setBusy(true)
     const reply = await createDb().aiChat([
-      { role: 'system', content: '你是一名耐心的学习助手，请用中文简洁清晰地回答。' },
+      { role: 'system', content: '我是小咕，深夜书房里的猫头鹰，你的专属学习伙伴；回答用中文，温暖简洁，避免官腔。 你是一名耐心的学习助手，请用中文简洁清晰地回答。' },
     ].concat(history))
     const all = history.concat([{ role: 'assistant' as const, content: reply }])
     setMessages(all)
@@ -171,7 +171,7 @@ export default function AIPage() {
     setLastTool('summary')
     setToolResult('AI 总结中...')
     const result = await createDb().aiChat([
-      { role: 'system', content: '你是一名学习助手。请用简洁的中文总结章节的核心知识点、重点公式与易错点，控制在 300 字以内。' },
+      { role: 'system', content: '我是小咕，深夜书房里的猫头鹰，你的专属学习伙伴；回答用中文，温暖简洁，避免官腔。 你是一名学习助手。请用简洁的中文总结章节的核心知识点、重点公式与易错点，控制在 300 字以内。' },
       { role: 'user', content: currentChapter.title + '\n\n' + currentChapter.content.slice(0, 4000) },
     ])
     setToolResult(result)
@@ -219,7 +219,7 @@ export default function AIPage() {
       '待办任务：' + tasks.filter(function (t) { return !t.completed }).length,
     ].join('\n')
     const result = await createDb().aiChat([
-      { role: 'system', content: '你是学习规划顾问。请基于以下学习数据，给出 3-5 条个性化学习建议与薄弱点诊断，并指出下个阶段最该提升的 1-2 件事。用中文、分点输出。' },
+      { role: 'system', content: '我是小咕，深夜书房里的猫头鹰，你的专属学习伙伴；回答用中文，温暖简洁，避免官腔。 你是学习规划顾问。请基于以下学习数据，给出 3-5 条个性化学习建议与薄弱点诊断，并指出下个阶段最该提升的 1-2 件事。用中文、分点输出。' },
       { role: 'user', content: summary },
     ])
     setToolResult(result)
@@ -231,7 +231,7 @@ export default function AIPage() {
     setToolBusy(true)
     setToolResult('AI 出题中...')
     const raw = await createDb().aiChat([
-      { role: 'system', content: '你是学习出题助手。请根据章节内容出 5 道单项选择题，只输出 JSON 数组，格式：[{  q: 题目, options: [A..., B..., C..., D...], answer: 0 }]，answer 为正确选项下标。不要输出其它内容。' },
+      { role: 'system', content: '我是小咕，深夜书房里的猫头鹰，你的专属学习伙伴；回答用中文，温暖简洁，避免官腔。 你是学习出题助手。请根据章节内容出 5 道单项选择题，只输出 JSON 数组，格式：[{  q: 题目, options: [A..., B..., C..., D...], answer: 0 }]，answer 为正确选项下标。不要输出其它内容。' },
       { role: 'user', content: currentChapter.title + '\n\n' + currentChapter.content.slice(0, 4000) },
     ])
     const items = parseQuiz(raw)
@@ -321,7 +321,7 @@ export default function AIPage() {
     setLastTool('essay')
     setToolResult('AI 批改中...')
     const result = await createDb().aiChat([
-      { role: 'system', content: '你是作文批改老师。请从内容、结构、语言、亮点与改进建议五个维度评价，并给出综合评分（百分制）。用中文输出。' },
+      { role: 'system', content: '我是小咕，深夜书房里的猫头鹰，你的专属学习伙伴；回答用中文，温暖简洁，避免官腔。 你是作文批改老师。请从内容、结构、语言、亮点与改进建议五个维度评价，并给出综合评分（百分制）。用中文输出。' },
       { role: 'user', content: essayText },
     ])
     setToolResult(result)
@@ -352,7 +352,7 @@ export default function AIPage() {
       cardsDuePeriod: cardTasks.length,
     }, 7)
     const polished = await createDb().aiChat([
-      { role: 'system', content: '下面是一份学习周报草稿，请润色成一篇通顺、积极、结构清晰的中文周报，保留 Markdown 格式和所有数据，可在开头增加一段总结。' },
+      { role: 'system', content: '我是小咕，深夜书房里的猫头鹰，你的专属学习伙伴；回答用中文，温暖简洁，避免官腔。 下面是一份学习周报草稿，请润色成一篇通顺、积极、结构清晰的中文周报，保留 Markdown 格式和所有数据，可在开头增加一段总结。' },
       { role: 'user', content: base },
     ])
     setToolResult(polished.indexOf('失败') === -1 && polished.indexOf('AI') === -1 ? polished : base)
@@ -391,7 +391,7 @@ export default function AIPage() {
     setToolResult('AI 生成卡片中...')
     const tb = textbooks.find(function (t) { return t.id === currentChapter.textbookId })
     const raw = await createDb().aiChat([
-      { role: 'system', content: '请根据章节内容提炼 5 张间隔重复复习卡片，只输出 JSON 数组：[{ front: 问题, back: 答案 }]。' },
+      { role: 'system', content: '我是小咕，深夜书房里的猫头鹰，你的专属学习伙伴；回答用中文，温暖简洁，避免官腔。 请根据章节内容提炼 5 张间隔重复复习卡片，只输出 JSON 数组：[{ front: 问题, back: 答案 }]。' },
       { role: 'user', content: currentChapter.title + '\n\n' + currentChapter.content.slice(0, 3000) },
     ])
     const m = raw.match(/\[[\s\S]*\]/)
@@ -437,7 +437,7 @@ export default function AIPage() {
     const now = new Date().toISOString()
     let cardCount = 0
     const rawCards = await createDb().aiChat([
-      { role: 'system', content: '请根据章节内容提炼 5 张间隔重复复习卡片，只输出 JSON 数组：[{  front: 问题, back: 答案 }]。' },
+      { role: 'system', content: '我是小咕，深夜书房里的猫头鹰，你的专属学习伙伴；回答用中文，温暖简洁，避免官腔。 请根据章节内容提炼 5 张间隔重复复习卡片，只输出 JSON 数组：[{  front: 问题, back: 答案 }]。' },
       { role: 'user', content: currentChapter.title + '\n\n' + currentChapter.content.slice(0, 3000) },
     ])
     const cm = rawCards.match(/\[[\s\S]*\]/)
@@ -468,7 +468,7 @@ export default function AIPage() {
       } catch (e) { /* ignore */ }
     }
     const rawQuiz = await createDb().aiChat([
-      { role: 'system', content: '请根据章节内容出 5 道单项选择题，只输出 JSON 数组：[{ q: 题目, options: [A..., B..., C..., D...], answer: 0 }]。' },
+      { role: 'system', content: '我是小咕，深夜书房里的猫头鹰，你的专属学习伙伴；回答用中文，温暖简洁，避免官腔。 请根据章节内容出 5 道单项选择题，只输出 JSON 数组：[{ q: 题目, options: [A..., B..., C..., D...], answer: 0 }]。' },
       { role: 'user', content: currentChapter.title + '\n\n' + currentChapter.content.slice(0, 4000) },
     ])
     const items = parseQuiz(rawQuiz)
@@ -485,10 +485,10 @@ export default function AIPage() {
     return (
       <div className='ai-page'>
         <div className='page-header'>
-          <h2><Sparkles size={18} /> AI 助手</h2>
+          <h2><Sparkles size={18} /> 小咕 · AI 助手</h2>
         </div>
         <div className='ai-unconfigured'>
-          <p>🔑 AI 功能需要先配置接口（已预置 DeepSeek，填入 API Key 即可）。</p>
+          <p>🦉 我是小咕，深夜书房里的猫头鹰。要和我说话，先帮我点亮灯吧：配置一个 AI 接口（已预置 DeepSeek，填入 API Key 即可）。</p>
           <Button variant='primary' onClick={function () { setActivePage('settings') }}>前往设置</Button>
         </div>
       </div>
@@ -498,8 +498,8 @@ export default function AIPage() {
   return (
     <div className='ai-page'>
       <div className='page-header'>
-        <h2><Sparkles size={18} /> AI 助手</h2>
-        <span className='graph-hint'>对话问答 · 章节总结 · 智能出题自测 · 生成复习卡片</span>
+        <h2><Sparkles size={18} /> 小咕 · AI 助手</h2>
+        <span className='graph-hint'>🦉 对话问答 · 章节总结 · 智能出题自测 · 生成复习卡片</span>
       </div>
 
       <section className='ai-tools'>
@@ -632,7 +632,7 @@ export default function AIPage() {
         </div>
         <div className='chat-messages'>
           {messages.length === 0 ? (
-            <EmptyState title='向 AI 提问吧' hint='例如：「用通俗的话解释一下极限的定义」' color='var(--c-ai)' />
+            <EmptyState title='和小咕聊聊吧' hint='我是小咕，深夜书房里的猫头鹰。比如问我：「用通俗的话解释极限的定义」' color='var(--c-ai)' />
           ) : (
             messages.map(function (msg, i) {
               return (
@@ -646,7 +646,7 @@ export default function AIPage() {
           <div ref={messagesEndRef} />
         </div>
         <div className='chat-input-row'>
-          <Input value={input} onChange={setInput} placeholder='输入你的问题，回车发送' className='chat-input' />
+          <Input value={input} onChange={setInput} placeholder='把问题说给小咕，回车发送' className='chat-input' />
           <Button variant='primary' onClick={send} disabled={busy || !input.trim()}>发送</Button>
         </div>
       </section>

@@ -217,25 +217,28 @@ export default function SettingsPage() {
         <p className='setting-desc'>预置多个服务商，选择后自动填入接口与模型；也支持任意 OpenAI 兼容接口或本地 Ollama（无需 Key）。用于章节总结、生成复习卡片等。</p>
         <div className='ai-form'>
           <label>服务商</label>
-          <select className='select-input' value={currentProvider(settings)} onChange={function (e) {
-            const id = e.target.value
-            const preset = AI_PROVIDERS.find(function (p) { return p.id === id })
-            const next = Object.assign({}, settings, { aiProvider: id })
-            if (preset && preset.baseUrl) {
-              next.aiBaseUrl = preset.baseUrl
-              next.aiModel = preset.model
-            }
-            setSettings(next)
-          }}>
-            {AI_PROVIDERS.map(function (p) {
-              return <option key={p.id} value={p.id}>{p.name}</option>
-            })}
-          </select>
+          <div className='ai-select-wrap'>
+            <select className='select-input ai-provider-select' value={currentProvider(settings)} onChange={function (e) {
+              const id = e.target.value
+              const preset = AI_PROVIDERS.find(function (p) { return p.id === id })
+              const next = Object.assign({}, settings, { aiProvider: id })
+              if (preset && preset.baseUrl) {
+                next.aiBaseUrl = preset.baseUrl
+                next.aiModel = preset.model
+              }
+              setSettings(next)
+            }}>
+              {AI_PROVIDERS.map(function (p) {
+                return <option key={p.id} value={p.id}>{p.name}</option>
+              })}
+            </select>
+            <span className='ai-select-arrow' aria-hidden='true'>▾</span>
+          </div>
           <label>接口地址（Base URL）</label>
           <Input value={settings.aiBaseUrl} onChange={function (v) { setSettings(Object.assign({}, settings, { aiBaseUrl: v })) }} placeholder='https://api.openai.com/v1' />
           <label>API Key（{currentProvider(settings) === 'ollama' ? '本地模型可留空' : '必填'}）</label>
           <Input value={settings.aiApiKey} onChange={function (v) { setSettings(Object.assign({}, settings, { aiApiKey: v })) }} placeholder={(AI_PROVIDERS.find(function (p) { return p.id === currentProvider(settings) }) || AI_PROVIDERS[0]).keyHint} type='password' />
-          <label>模型</label>
+          <label>回复模型 <span className='setting-desc-inline'>（可自由选择或填写任意模型名）</span></label>
           <Input value={settings.aiModel} onChange={function (v) { setSettings(Object.assign({}, settings, { aiModel: v })) }} placeholder='deepseek-chat / gpt-4o-mini / qwen-plus' />
           <div className='ai-form-actions'>
             <Button variant='default' onClick={testAi}>测试连接</Button>

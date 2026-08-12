@@ -3,7 +3,6 @@ import { Bell, FileQuestion, Lamp, Layers, Lightbulb, ListChecks, Minimize2, Moo
 import type { LucideIcon } from 'lucide-react'
 import type { AppPage } from '../../types'
 import { useApp } from '../../stores/AppContext'
-import owlSvg from '../../../assets/brand/xiaogu-tray-final.svg?raw'
 
 interface QuickAction {
   id: AppPage
@@ -44,7 +43,6 @@ export function TitleBar() {
   return (
     <header className='titlebar'>
       <div className='titlebar-brand'>
-          <span className='titlebar-logo' title='小咕 · 深夜书房'><span className='titlebar-logo-owl' dangerouslySetInnerHTML={{ __html: owlSvg }} /></span>
           <span className='titlebar-title'>Study desktop</span>
         </div>
       <button className='titlebar-search' onClick={openSearch}>

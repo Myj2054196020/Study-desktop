@@ -69,7 +69,8 @@ export default function BookshelfPage() {
   const imageRef = useRef<HTMLImageElement | null>(null)
   const pdfFitRef = useRef(1)
   const pdfFitAppliedRef = useRef(false)
-  const pdfBaseScale = 1.0
+  // 以 2 倍像素渲染，放大时依旧清晰（CSS 缩放不再发虚）
+  const pdfBaseScale = 2.0
 
   const load = function () {
     createDb().getResources().then(function (list) { setResources(list) }).catch(function () {})
@@ -180,7 +181,9 @@ export default function BookshelfPage() {
     if (!state || state.id !== id) return
     readingRef.current = null
     setReading(null)
-    const mins = Math.max(1, Math.round((Date.now() - state.start) / 60000))
+    // 精确到秒：读多少记多少，不再“取消一次至少 1 分钟”
+    const secs = Math.max(1, Math.round((Date.now() - state.start) / 1000))
+    const mins = secs / 60
     const found = resources.find(function (r) { return r.id === id })
     if (found) {
       createDb().updateResourceProgress(id, { readingMinutes: (found.readingMinutes || 0) + mins }).then(load)
@@ -416,6 +419,16 @@ export default function BookshelfPage() {
     }
   }
 
+  const toggleFullscreen = function () {
+    const stage = stageRef.current
+    if (!stage) return
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(function () {})
+    } else {
+      stage.requestFullscreen().catch(function () {})
+    }
+  }
+
   const onStagePointerDown = function (e: React.PointerEvent<HTMLDivElement>) {
     if (e.button !== 0) return
     viewerDragRef.current = {
@@ -481,6 +494,15 @@ export default function BookshelfPage() {
     setQuickNote('')
     load()
     showViewerMsg('已保存读书笔记 ✓')
+  }
+
+  const readerNotes = readerId ? ((resources.find(function (x) { return x.id === readerId }) || {}).notes || []) : []
+  const deleteReaderNote = async function (noteId: string) {
+    const r = resources.find(function (x) { return x.id === readerId })
+    if (!r) return
+    const updated = Object.assign({}, r, { notes: (r.notes || []).filter(function (n) { return n.id !== noteId }) })
+    await createDb().saveResource(updated)
+    load()
   }
 
   const noteToCard = async function () {
@@ -682,7 +704,7 @@ export default function BookshelfPage() {
       )}
 
       {readerId ? (
-        <Modal onClose={closeReader} className='pdf-reader-modal'>
+        <Modal onClose={closeReader} className='pdf-reader-modal' closeOnBackdrop={false}>
           <div className='pdf-reader-toolbar'>
             <span className='pdf-reader-title'>{imageUrl ? <ImageIcon size={14} /> : <BookOpen size={14} />} {imageUrl ? '图片阅读' : '阅读器'}</span>
             {!imageUrl ? (
@@ -708,16 +730,33 @@ export default function BookshelfPage() {
               <button className='pdf-reader-zoom-pct' onClick={resetZoom} title={imageUrl ? '回到 100%（实际像素）' : '回到 100%'}>{zoomPct}%</button>
               <button className='pdf-reader-btn' onClick={zoomIn} title='放大 (+)'>+</button>
               <button className='pdf-reader-btn' onClick={fitView} title='适应窗口'>适应</button>
+              <button className='pdf-reader-btn' onClick={toggleFullscreen} title='全屏阅读'>⛶ 全屏</button>
             </div>
             {!imageUrl ? (
               <button className='pdf-reader-btn' onClick={addBookmark} title='给当前页加书签'><Bookmark size={13} /> 书签</button>
             ) : null}
             <div className='pdf-reader-note'>
-              <input className='pdf-quicknote' value={quickNote} onChange={function (e) { setQuickNote(e.target.value) }} onKeyDown={function (e) { if (e.key === 'Enter') { addQuickNote() } }} placeholder='当前页批注…' />
-              <button className='pdf-reader-btn' onClick={addQuickNote} title='保存为读书笔记'>批注</button>
-              <button className='pdf-reader-btn' onClick={noteToCard} title='把当前批注转成一张复习卡片'>转卡片</button>
-              <button className='pdf-reader-btn' onClick={noteToReflection} title='把当前批注存进学习心得'>存心得</button>
+              <textarea className='pdf-quicknote' rows={2} value={quickNote} onChange={function (e) { setQuickNote(e.target.value) }} placeholder='当前页批注…（支持多行，记得随手保存）' />
+              <div className='pdf-reader-note-actions'>
+                <button className='pdf-reader-btn' onClick={addQuickNote} title='保存为读书笔记'>📝 批注</button>
+                <button className='pdf-reader-btn' onClick={noteToCard} title='把当前批注转成一张复习卡片'>转卡片</button>
+                <button className='pdf-reader-btn' onClick={noteToReflection} title='把当前批注存进学习心得'>存心得</button>
+              </div>
             </div>
+            {readerNotes.length > 0 ? (
+              <div className='reader-notes'>
+                <div className='reader-notes-title'>📖 本书读书笔记（{readerNotes.length}）</div>
+                {readerNotes.slice().reverse().map(function (n) {
+                  return (
+                    <div key={n.id} className='reader-note-item'>
+                      <span className='reader-note-page'>{n.page ? '第 ' + n.page + ' 页' : '笔记'}</span>
+                      <span className='reader-note-text'>{n.text}</span>
+                      <button className='reader-note-del' title='删除这条笔记' onClick={function () { deleteReaderNote(n.id) }}>✕</button>
+                    </div>
+                  )
+                })}
+              </div>
+            ) : null}
             <span className='pdf-reader-close' onClick={closeReader}>✕ 关闭</span>
             {viewerMsg ? <div className='viewer-msg'>{viewerMsg}</div> : null}
             {bookmarks.length > 0 ? (
