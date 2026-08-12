@@ -19,12 +19,12 @@
 **Windows 安装包**（约 127 MB，支持 Win10 / Win11）：
 
 - GitHub Release（官方）：<https://github.com/Myj2054196020/Study-desktop/releases/latest>
-- 国内加速下载（无需代理）：<https://ghfast.top/https://github.com/Myj2054196020/Study-desktop/releases/latest/download/Study-desktop-Setup-1.3.6.exe>
-- 备用加速：<https://gh-proxy.com/https://github.com/Myj2054196020/Study-desktop/releases/latest/download/Study-desktop-Setup-1.3.6.exe>
+- 国内加速下载（无需代理）：<https://ghfast.top/https://github.com/Myj2054196020/Study-desktop/releases/latest/download/Study-desktop-Setup-1.4.0.exe>
+- 备用加速：<https://gh-proxy.com/https://github.com/Myj2054196020/Study-desktop/releases/latest/download/Study-desktop-Setup-1.4.0.exe>
 
 - Gitee 镜像（国内直连）：<https://gitee.com/meng-yanjin/study-desktop/releases>
-  - 分卷 1：[Study-desktop-Setup-1.3.6.7z.001](https://gitee.com/meng-yanjin/study-desktop/releases/download/v1.3.6/Study-desktop-Setup-1.3.6.7z.001)
-  - 分卷 2：[Study-desktop-Setup-1.3.6.7z.002](https://gitee.com/meng-yanjin/study-desktop/releases/download/v1.3.6/Study-desktop-Setup-1.3.6.7z.002)
+  - 分卷 1：[Study-desktop-Setup-1.4.0.7z.001](https://gitee.com/meng-yanjin/study-desktop/releases/download/v1.4.0/Study-desktop-Setup-1.4.0.7z.001)
+  - 分卷 2：[Study-desktop-Setup-1.4.0.7z.002](https://gitee.com/meng-yanjin/study-desktop/releases/download/v1.4.0/Study-desktop-Setup-1.4.0.7z.002)
   - 两个分卷都要下载，用 7-Zip（<https://www.7-zip.org>）打开 `.001` 即可解压出安装包
 
 - 百度网盘（备选，免费用户可能限速）：<https://pan.baidu.com/s/1rMOO1mp0c7OZ6f31k_0N2g?pwd=wig2>（链接已含提取码）
